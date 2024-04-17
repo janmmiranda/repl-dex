@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/janmmiranda/src/internal/pokeapi"
+	"github.com/janmmiranda/repl-dex/src/internal/pokeapi"
 )
 
 type config struct {
