@@ -6,16 +6,16 @@ import (
 	"os"
 	"strings"
 
-	"github.com/janmmiranda/repl-dex/src/internal/pokeapi"
+	"github.com/janmmiranda/repl-dex/internal/pokeapi"
 )
 
 type config struct {
 	pokeapiClient        pokeapi.Client
-	nextLocationsUrl     string
-	previousLocationsUrl string
+	nextLocationsUrl     *string
+	previousLocationsUrl *string
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	reader := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Println("Pokedex > ")
@@ -30,7 +30,7 @@ func startRepl() {
 
 		command, exists := getCommands()[commandName]
 		if exists {
-			err := command.callback()
+			err := command.callback(cfg)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -72,8 +72,8 @@ func getCommands() map[string]cliCommand {
 			description: "Get next locations, 20 at a time.",
 			callback:    commandMapf,
 		},
-		"mapB": {
-			name:        "mapB",
+		"mapb": {
+			name:        "mapb",
 			description: "Get previous locations, 20 at a time.",
 			callback:    commandMapb,
 		},

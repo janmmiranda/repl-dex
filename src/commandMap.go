@@ -1,11 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
 func commandMapf(cfg *config) error {
-	fmt.Println()
 	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsUrl)
 	if err != nil {
 		return err
@@ -21,7 +21,9 @@ func commandMapf(cfg *config) error {
 }
 
 func commandMapb(cfg *config) error {
-	fmt.Println()
+	if cfg.previousLocationsUrl == nil {
+		return errors.New("no previous locations available, call map first")
+	}
 	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.previousLocationsUrl)
 	if err != nil {
 		return err

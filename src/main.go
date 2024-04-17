@@ -1,5 +1,15 @@
 package main
 
+import (
+	"time"
+
+	"github.com/janmmiranda/repl-dex/internal/pokeapi"
+)
+
 func main() {
-	startRepl()
+	pokeClient := pokeapi.NewClient(5 * time.Second)
+	cfg := &config{
+		pokeapiClient: pokeClient,
+	}
+	startRepl(cfg)
 }
