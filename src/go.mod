@@ -4,7 +4,10 @@ go 1.22.2
 
 replace github.com/janmmiranda/repl-dex/internal/pokeapi => ./internal/pokeapi
 
-require github.com/janmmiranda/repl-dex/internal/pokeapi v0.0.0-00010101000000-000000000000
+require (
+	github.com/google/uuid v1.6.0
+	github.com/janmmiranda/repl-dex/internal/pokeapi v0.0.0-00010101000000-000000000000
+)
 
 replace github.com/janmmiranda/repl-dex/internal/pokecache => ./internal/pokecache
 
