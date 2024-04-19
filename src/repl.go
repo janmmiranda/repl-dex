@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"strings"
 
 	"github.com/janmmiranda/repl-dex/internal/pokeapi"
+	"github.com/peterh/liner"
 )
 
 type config struct {
@@ -14,37 +14,48 @@ type config struct {
 	nextLocationsUrl     *string
 	previousLocationsUrl *string
 	pokemonBox           pokeBox
+	line                 *liner.State
 }
 
 func startRepl(cfg *config) {
-	reader := bufio.NewScanner(os.Stdin)
+	defer cfg.line.Close()
+
+	if f, err := os.Open(".repl_history"); err == nil {
+		cfg.line.ReadHistory(f)
+		f.Close()
+	}
+
+	// reader := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Println("Pokedex > ")
-		reader.Scan()
+		// fmt.Println("Pokedex > ")
+		// reader.Scan()
+		if input, err := cfg.line.Prompt("Pokedex > "); err == nil {
+			cfg.line.AppendHistory(input)
+			// words := cleanInput(reader.Text())
+			words := cleanInput(input)
 
-		words := cleanInput(reader.Text())
-		if len(words) == 0 {
-			continue
-		}
-
-		commandName := words[0]
-		argument := ""
-		if len(words) > 1 {
-			argument = words[1]
-		}
-
-		command, exists := getCommands()[commandName]
-		if exists {
-			err := command.callback(cfg, argument)
-			if err != nil {
-				fmt.Println(err)
+			if len(words) == 0 {
+				continue
 			}
-			continue
-		} else {
-			fmt.Println("Unkown command")
-			continue
-		}
 
+			commandName := words[0]
+			argument := ""
+			if len(words) > 1 {
+				argument = words[1]
+			}
+
+			command, exists := getCommands()[commandName]
+			if exists {
+				err := command.callback(cfg, argument)
+				if err != nil {
+					fmt.Println(err)
+				}
+				continue
+			} else {
+				fmt.Println("Unkown command")
+				continue
+			}
+		}
 	}
 }
 
@@ -96,6 +107,11 @@ func getCommands() map[string]cliCommand {
 			name:        "inspect",
 			description: "Inspect a caught pokemon given it's name",
 			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List the pokemon you have caught",
+			callback:    commandPokedex,
 		},
 	}
 }
